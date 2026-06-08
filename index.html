@@ -90,30 +90,34 @@
 
 <div class="card">
 
-  <div class="topbar">
-    <button onclick="toggleMode()">🌙</button>
+  
 
-    <!-- ✅ Sprach-Auswahl -->
-    <select onchange="setLang(this.value)" id="langSelect">
-      <option value="de">Deutsch</option>
-      <option value="en">English</option>
-      <option value="es">Español</option>
-    </select>
+<div class="topbar">
+
+  <button onclick="toggleMode()">🌙</button>
+
+  <!-- ✅ Flaggen -->
+  <div class="flags">
+    <span onclick="setLang('de')">🇩🇪</span>
+    <span onclick="setLang('en')">🇬🇧</span>
+    <span onclick="setLang('es')">🇪🇸</span>
   </div>
 
-  <h2 id="title">Gemeinsames Konto</h2>
-
-  <input id="a" placeholder="Mann Lohn">
-  <input id="b" placeholder="Frau Lohn">
-  <input id="d" placeholder="Gesamtsumme">
-
-  <button onclick="calc()" id="calcBtn">Berechnen</button>
-
-  <div class="result" id="result"></div>
 </div>
 
 <script>
 let lang = "de";
+
+.flags span {
+  font-size: 22px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: transform 0.2s;
+}
+
+.flags span:hover {
+  transform: scale(1.2);
+}
 
 // ✅ Übersetzungen
 const translations = {
