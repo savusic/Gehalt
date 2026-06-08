@@ -67,19 +67,19 @@
     border-radius: 10px;
   }
 
-  .iulian {
+  .Mann {
     background: #d4edda;
   }
 
-  .vanessa {
+  .Frau {
     background: #f8d7da;
   }
 
-  .dark .iulian {
+  .dark .Mann {
     background: #2e5e3e;
   }
 
-  .dark .vanessa {
+  .dark .Frau {
     background: #6b2c2c;
   }
 
@@ -99,8 +99,8 @@
 
   <h2>Gemeinsames Konto</h2>
 
-  <input id="a" placeholder="Iulian Lohn">
-  <input id="b" placeholder="Vanessa Lohn">
+  <input id="a" placeholder="Mann Lohn">
+  <input id="b" placeholder="Frau Lohn">
   <input id="d" placeholder="Gesamtsumme">
 
   <button onclick="calc()">Berechnen</button>
@@ -126,12 +126,12 @@ function calc() {
     return;
   }
 
-  let iulian = d / (a + b) * a;
-  let vanessa = d / (a + b) * b;
+  let Mann = d / (a + b) * a;
+  let Frau = d / (a + b) * b;
 
   document.getElementById('result').innerHTML = `
-    <div class="box iulian">👤 Iulian überweist:<br><b>${formatEUR(iulian)}</b></div>
-    <div class="box vanessa">👩 Vanessa überweist:<br><b>${formatEUR(vanessa)}</b></div>
+    <div class="box Mann">👤 Mann überweist:<br><b>${formatEUR(Mann)}</b></div>
+    <div class="box Frau">👩 Frau überweist:<br><b>${formatEUR(Frau)}</b></div>
   `;
 
   localStorage.setItem("a", a);
