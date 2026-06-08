@@ -41,7 +41,7 @@
     border-radius: 10px;
     border: 1px solid #ccc;
     font-size: 16px;
-    box-sizing: border-box; /* ✅ HIER ergänzen */
+    box-sizing: border-box;
   }
 
   button {
@@ -67,25 +67,21 @@
     border-radius: 10px;
   }
 
-  .Mann {
-    background: #d4edda;
-  }
+  .Mann { background: #d4edda; }
+  .Frau { background: #f8d7da; }
 
-  .Frau {
-    background: #f8d7da;
-  }
+  .dark .Mann { background: #2e5e3e; }
+  .dark .Frau { background: #6b2c2c; }
 
-  .dark .Mann {
-    background: #2e5e3e;
-  }
-
-  .dark .Frau {
-    background: #6b2c2c;
-  }
-
-  .toggle {
+  .topbar {
+    display: flex;
+    justify-content: space-between;
     margin-bottom: 15px;
-    text-align: right;
+  }
+
+  select {
+    padding: 6px;
+    border-radius: 8px;
   }
 </style>
 </head>
@@ -93,24 +89,87 @@
 <body>
 
 <div class="card">
-  <div class="toggle">
-    <button onclick="toggleMode()">🌙 Dark Mode</button>
+
+  <div class="topbar">
+    <button onclick="toggleMode()">🌙</button>
+
+    <!-- ✅ Sprach-Auswahl -->
+    <select onchange="setLang(this.value)" id="langSelect">
+      <option value="de">Deutsch</option>
+      <option value="en">English</option>
+      <option value="es">Español</option>
+    </select>
   </div>
 
-  <h2>Gemeinsames Konto</h2>
+  <h2 id="title">Gemeinsames Konto</h2>
 
   <input id="a" placeholder="Mann Lohn">
   <input id="b" placeholder="Frau Lohn">
   <input id="d" placeholder="Gesamtsumme">
 
-  <button onclick="calc()">Berechnen</button>
+  <button onclick="calc()" id="calcBtn">Berechnen</button>
 
   <div class="result" id="result"></div>
 </div>
 
 <script>
+let lang = "de";
+
+// ✅ Übersetzungen
+const translations = {
+  de: {
+    title: "Gemeinsames Konto",
+    man: "Mann Lohn",
+    woman: "Frau Lohn",
+    total: "Gesamtsumme",
+    calc: "Berechnen",
+    error: "⚠️ Bitte gültige Werte eingeben",
+    manPays: "👤 Mann überweist:",
+    womanPays: "👩 Frau überweist:"
+  },
+  en: {
+    title: "Shared Account",
+    man: "Man Salary",
+    woman: "Woman Salary",
+    total: "Total Amount",
+    calc: "Calculate",
+    error: "⚠️ Please enter valid values",
+    manPays: "👤 Man pays:",
+    womanPays: "👩 Woman pays:"
+  },
+  es: {
+    title: "Cuenta Compartida",
+    man: "Salario Hombre",
+    woman: "Salario Mujer",
+    total: "Cantidad Total",
+    calc: "Calcular",
+    error: "⚠️ Introduce valores válidos",
+    manPays: "👤 Hombre paga:",
+    womanPays: "👩 Mujer paga:"
+  }
+};
+
+// ✅ Sprache setzen
+function setLang(l) {
+  lang = l;
+  localStorage.setItem("lang", l);
+  applyLang();
+}
+
+// ✅ Texte anwenden
+function applyLang() {
+  const t = translations[lang];
+
+  document.getElementById("title").innerText = t.title;
+  document.getElementById("a").placeholder = t.man;
+  document.getElementById("b").placeholder = t.woman;
+  document.getElementById("d").placeholder = t.total;
+  document.getElementById("calcBtn").innerText = t.calc;
+}
+
+// ✅ Währung formatieren (je nach Sprache)
 function formatEUR(value) {
-  return new Intl.NumberFormat('de-DE', {
+  return new Intl.NumberFormat(lang === "de" ? "de-DE" : lang === "es" ? "es-ES" : "en-US", {
     style: 'currency',
     currency: 'EUR'
   }).format(value);
@@ -121,8 +180,10 @@ function calc() {
   let b = parseFloat(document.getElementById('b').value);
   let d = parseFloat(document.getElementById('d').value);
 
+  const t = translations[lang];
+
   if (isNaN(a) || isNaN(b) || isNaN(d) || (a + b) === 0) {
-    document.getElementById('result').innerHTML = "⚠️ Bitte gültige Werte eingeben";
+    document.getElementById('result').innerHTML = t.error;
     return;
   }
 
@@ -130,19 +191,21 @@ function calc() {
   let Frau = d / (a + b) * b;
 
   document.getElementById('result').innerHTML = `
-    <div class="box Mann">👤 Mann überweist:<br><b>${formatEUR(Mann)}</b></div>
-    <div class="box Frau">👩 Frau überweist:<br><b>${formatEUR(Frau)}</b></div>
+    <div class="box Mann">${t.manPays}<br><b>${formatEUR(Mann)}</b></div>
+    <div class="box Frau">${t.womanPays}<br><b>${formatEUR(Frau)}</b></div>
   `;
-
-  localStorage.setItem("a", a);
-  localStorage.setItem("b", b);
-  localStorage.setItem("d", d);
 }
 
+// ✅ Beim Laden Sprache wiederherstellen
 window.onload = function() {
   document.getElementById('a').value = localStorage.getItem("a") || "";
   document.getElementById('b').value = localStorage.getItem("b") || "";
   document.getElementById('d').value = localStorage.getItem("d") || "";
+
+  lang = localStorage.getItem("lang") || "de";
+  document.getElementById("langSelect").value = lang;
+
+  applyLang();
 }
 
 function toggleMode() {
