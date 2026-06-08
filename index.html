@@ -9,12 +9,6 @@ body {
   margin: 0;
   padding: 20px;
   background: #f4f6f9;
-  transition: 0.3s;
-}
-
-.dark {
-  background: #1e1e1e;
-  color: #fff;
 }
 
 .card {
@@ -22,12 +16,8 @@ body {
   margin: auto;
   background: white;
   padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
-}
-
-.dark .card {
-  background: #2c2c2c;
+  border-radius: 20px;
+  box-shadow: 0px 8px 25px rgba(0,0,0,0.1);
 }
 
 h2 {
@@ -38,7 +28,7 @@ input {
   width: 100%;
   padding: 12px;
   margin: 8px 0;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid #ccc;
   font-size: 16px;
   box-sizing: border-box;
@@ -50,7 +40,7 @@ button {
   margin-top: 10px;
   font-size: 16px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #007bff;
   color: white;
 }
@@ -63,32 +53,48 @@ button {
 
 .box {
   margin-top: 10px;
-  padding: 10px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: 12px;
 }
 
 .Mann { background: #d4edda; }
 .Frau { background: #f8d7da; }
 
-.dark .Mann { background: #2e5e3e; }
-.dark .Frau { background: #6b2c2c; }
-
 .topbar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-end;
   margin-bottom: 15px;
 }
 
-.flags span {
-  font-size: 22px;
-  cursor: pointer;
-  margin-left: 10px;
-  transition: transform 0.2s, opacity 0.2s;
+/* ✅ Runde Flag-Buttons */
+.flags {
+  display: flex;
+  gap: 10px;
 }
 
+.flags span {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: #f1f1f1;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  transition: all 0.2s;
+}
+
+/* Hover Effekt */
 .flags span:hover {
-  transform: scale(1.2);
+  transform: scale(1.15);
+}
+
+/* Aktive Flagge */
+.flags span.active {
+  background: #007bff;
+  color: white;
 }
 </style>
 </head>
@@ -98,8 +104,6 @@ button {
 <div class="card">
 
   <div class="topbar">
-    <button onclick="toggleMode()">🌙</button>
-
     <div class="flags">
       <span onclick="setLang('de')">🇩🇪</span>
       <span onclick="setLang('en')">🇬🇧</span>
@@ -169,13 +173,13 @@ function applyLang() {
   document.getElementById("d").placeholder = t.total;
   document.getElementById("calcBtn").innerText = t.calc;
 
-  // aktive Flagge highlight
+  // ✅ aktive Flag setzen
   document.querySelectorAll(".flags span").forEach(el => {
-    el.style.opacity = "0.4";
+    el.classList.remove("active");
   });
 
   const index = lang === "de" ? 0 : lang === "en" ? 1 : 2;
-  document.querySelectorAll(".flags span")[index].style.opacity = "1";
+  document.querySelectorAll(".flags span")[index].classList.add("active");
 }
 
 function formatEUR(value) {
@@ -213,10 +217,6 @@ window.onload = function() {
 
   lang = localStorage.getItem("lang") || "de";
   applyLang();
-}
-
-function toggleMode() {
-  document.body.classList.toggle("dark");
 }
 </script>
 
