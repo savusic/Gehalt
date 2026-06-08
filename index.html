@@ -4,85 +4,92 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-  body {
-    font-family: Arial;
-    margin: 0;
-    padding: 20px;
-    background: #f4f6f9;
-    transition: 0.3s;
-  }
+body {
+  font-family: Arial;
+  margin: 0;
+  padding: 20px;
+  background: #f4f6f9;
+  transition: 0.3s;
+}
 
-  .dark {
-    background: #1e1e1e;
-    color: #fff;
-  }
+.dark {
+  background: #1e1e1e;
+  color: #fff;
+}
 
-  .card {
-    max-width: 400px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
-  }
+.card {
+  max-width: 400px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+}
 
-  .dark .card {
-    background: #2c2c2c;
-  }
+.dark .card {
+  background: #2c2c2c;
+}
 
-  h2 {
-    text-align: center;
-  }
+h2 {
+  text-align: center;
+}
 
-  input {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    box-sizing: border-box;
-  }
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  box-sizing: border-box;
+}
 
-  button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    font-size: 16px;
-    border: none;
-    border-radius: 10px;
-    background: #007bff;
-    color: white;
-  }
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  background: #007bff;
+  color: white;
+}
 
-  .result {
-    margin-top: 20px;
-    font-size: 18px;
-    text-align: center;
-  }
+.result {
+  margin-top: 20px;
+  font-size: 18px;
+  text-align: center;
+}
 
-  .box {
-    margin-top: 10px;
-    padding: 10px;
-    border-radius: 10px;
-  }
+.box {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
 
-  .Mann { background: #d4edda; }
-  .Frau { background: #f8d7da; }
+.Mann { background: #d4edda; }
+.Frau { background: #f8d7da; }
 
-  .dark .Mann { background: #2e5e3e; }
-  .dark .Frau { background: #6b2c2c; }
+.dark .Mann { background: #2e5e3e; }
+.dark .Frau { background: #6b2c2c; }
 
-  .topbar {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-  }
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
 
-  select {
-    padding: 6px;
-    border-radius: 8px;
-  }
+.flags span {
+  font-size: 22px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.flags span:hover {
+  transform: scale(1.2);
+}
 </style>
 </head>
 
@@ -90,36 +97,30 @@
 
 <div class="card">
 
-  
+  <div class="topbar">
+    <button onclick="toggleMode()">🌙</button>
 
-<div class="topbar">
-
-  <button onclick="toggleMode()">🌙</button>
-
-  <!-- ✅ Flaggen -->
-  <div class="flags">
-    <span onclick="setLang('de')">🇩🇪</span>
-    <span onclick="setLang('en')">🇬🇧</span>
-    <span onclick="setLang('es')">🇪🇸</span>
+    <div class="flags">
+      <span onclick="setLang('de')">🇩🇪</span>
+      <span onclick="setLang('en')">🇬🇧</span>
+      <span onclick="setLang('es')">🇪🇸</span>
+    </div>
   </div>
 
+  <h2 id="title">Gemeinsames Konto</h2>
+
+  <input id="a" placeholder="Mann Lohn">
+  <input id="b" placeholder="Frau Lohn">
+  <input id="d" placeholder="Gesamtsumme">
+
+  <button onclick="calc()" id="calcBtn">Berechnen</button>
+
+  <div class="result" id="result"></div>
 </div>
 
 <script>
 let lang = "de";
 
-.flags span {
-  font-size: 22px;
-  cursor: pointer;
-  margin-left: 10px;
-  transition: transform 0.2s;
-}
-
-.flags span:hover {
-  transform: scale(1.2);
-}
-
-// ✅ Übersetzungen
 const translations = {
   de: {
     title: "Gemeinsames Konto",
@@ -153,14 +154,12 @@ const translations = {
   }
 };
 
-// ✅ Sprache setzen
 function setLang(l) {
   lang = l;
   localStorage.setItem("lang", l);
   applyLang();
 }
 
-// ✅ Texte anwenden
 function applyLang() {
   const t = translations[lang];
 
@@ -169,14 +168,21 @@ function applyLang() {
   document.getElementById("b").placeholder = t.woman;
   document.getElementById("d").placeholder = t.total;
   document.getElementById("calcBtn").innerText = t.calc;
+
+  // aktive Flagge highlight
+  document.querySelectorAll(".flags span").forEach(el => {
+    el.style.opacity = "0.4";
+  });
+
+  const index = lang === "de" ? 0 : lang === "en" ? 1 : 2;
+  document.querySelectorAll(".flags span")[index].style.opacity = "1";
 }
 
-// ✅ Währung formatieren (je nach Sprache)
 function formatEUR(value) {
-  return new Intl.NumberFormat(lang === "de" ? "de-DE" : lang === "es" ? "es-ES" : "en-US", {
-    style: 'currency',
-    currency: 'EUR'
-  }).format(value);
+  return new Intl.NumberFormat(
+    lang === "de" ? "de-DE" : lang === "es" ? "es-ES" : "en-US",
+    { style: 'currency', currency: 'EUR' }
+  ).format(value);
 }
 
 function calc() {
@@ -200,15 +206,12 @@ function calc() {
   `;
 }
 
-// ✅ Beim Laden Sprache wiederherstellen
 window.onload = function() {
   document.getElementById('a').value = localStorage.getItem("a") || "";
   document.getElementById('b').value = localStorage.getItem("b") || "";
   document.getElementById('d').value = localStorage.getItem("d") || "";
 
   lang = localStorage.getItem("lang") || "de";
-  document.getElementById("langSelect").value = lang;
-
   applyLang();
 }
 
